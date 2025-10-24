@@ -13,4 +13,5 @@ node_modules/
 flattened.txt
 
 # Ignore Mac files
-.DS_Store
+.DS_Storelib/ds-test/
+lib/solmate/
