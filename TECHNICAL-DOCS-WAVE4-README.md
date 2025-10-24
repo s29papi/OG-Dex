@@ -1,10 +1,7 @@
 
 ---
 
-🧠 Technical Delivery — OG-Dex (Built on 0G Newton Testnet)
-
-**Demo**:  
-*Watch on YouTube (Placeholder: Insert link when available)*
+🧠 Technical Delivery — OG-Dex (Built on 0G Testnet)
 
 ### Overview
 OG-Dex is a decentralized Automated Market Maker (AMM) exchange deployed on the 0G testnet (chain ID 16602), leveraging the constant product formula (x * y = k) to enable trustless token swaps. Built using Solidity and Foundry, it provides a Uniswap V2-inspired protocol for creating liquidity pools, swapping tokens, and adding/removing liquidity, all secured by the 0G blockchain's low-cost, high-throughput environment.

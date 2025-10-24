@@ -1,4 +1,4 @@
-# UniFap-V2
+# OG-Dex
 
 Port of uniswap-v2-core and uniswap-v2-periphery without fee structure with foundry tests.
 
