@@ -2,7 +2,7 @@
 # (-include to ignore error if it does not exist)
 -include .env
 
-all: clean install update solc build dappbuild
+all: clean install update solc build 
 
 # Install proper solc version.
 solc:; nix-env -f https://github.com/dapphub/dapptools/archive/master.tar.gz -iA solc-static-versions.solc_0_8_11
@@ -20,14 +20,14 @@ install :; forge install # dapphub/ds-test && forge install rari-capital/solmate
 update:; forge update
 
 # Builds
-build  :; forge clean && forge build --optimize --optimize-runs 1000000
+build  :; forge clean && forge build --optimize --optimizer-runs 1000000
 dappbuild :; dapp build
 
 # chmod scripts
 scripts :; chmod +x ./scripts/*
 
 # Tests
-test   :; forge clean && forge test --optimize --optimize-runs 1000000 -v # --ffi # enable if you need the `ffi` cheat code on HEVM
+test   :; forge clean && forge test --optimize --optimizer-runs 1000000 -vvvv # --ffi # enable if you need the `ffi` cheat code on HEVM
 
 # Lints
 lint :; prettier --write src/**/*.sol && prettier --write src/*.sol

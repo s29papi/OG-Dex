@@ -26,8 +26,12 @@ contract UnifapV2Router {
 
     // ========= Modifiers =========
     modifier check(uint256 deadline) {
-        if (block.timestamp > deadline) revert Expired();
+        _check(deadline);
         _;
+    }
+
+    function _check(uint256 deadline) internal view {
+        if (block.timestamp > deadline) revert Expired();
     }
 
     // ========= Public Functions =========
@@ -46,37 +50,36 @@ contract UnifapV2Router {
     /// @return amountB Amount of tokenB to transfer
     /// @return liquidity Amount of liquidity transfered
     function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        address to,
-        uint256 deadline
+    address tokenA,
+    address tokenB,
+    uint256 amountADesired,
+    uint256 amountBDesired,
+    uint256 amountAMin,
+    uint256 amountBMin,
+    address to,
+    uint256 deadline
+)
+    public
+    check(deadline)
+    returns (
+        uint256 amountA,
+        uint256 amountB,
+        uint256 liquidity
     )
-        public
-        check(deadline)
-        returns (
-            uint256 amountA,
-            uint256 amountB,
-            uint256 liquidity
-        )
-    {
-        (amountA, amountB) = _computeLiquidityAmounts(
-            tokenA,
-            tokenB,
-            amountADesired,
-            amountBDesired,
-            amountAMin,
-            amountBMin
-        );
-        address pair = factory.pairs(tokenA, tokenB);
-        _safeTransferFrom(tokenA, msg.sender, pair, amountA);
-        _safeTransferFrom(tokenB, msg.sender, pair, amountB);
-        liquidity = IUnifapV2Pair(pair).mint(to);
-    }
-
+{
+    address pair;
+    (amountA, amountB, pair) = _computeLiquidityAmounts(
+        tokenA,
+        tokenB,
+        amountADesired,
+        amountBDesired,
+        amountAMin,
+        amountBMin
+    );
+    _safeTransferFrom(tokenA, msg.sender, pair, amountA);
+    _safeTransferFrom(tokenB, msg.sender, pair, amountB);
+    liquidity = IUnifapV2Pair(pair).mint(to);
+}
     /// @notice Remove liquidity from token pool pair
     /// @param tokenA The first token
     /// @param tokenB The second token
@@ -109,23 +112,26 @@ contract UnifapV2Router {
 
     /// @notice computes token amounts according to marginal prices to be transfered
     /// @dev Creates a token pool pair if not already created
-    function _computeLiquidityAmounts(
-        address tokenA,
-        address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired,
-        uint256 amountAMin,
-        uint256 amountBMin
-    ) internal returns (uint256 amountA, uint256 amountB) {
-        if (factory.pairs(tokenA, tokenB) == address(0)) {
-            factory.createPair(tokenA, tokenB);
-        }
-
+function _computeLiquidityAmounts(
+    address tokenA,
+    address tokenB,
+    uint256 amountADesired,
+    uint256 amountBDesired,
+    uint256 amountAMin,
+    uint256 amountBMin
+) internal returns (uint256 amountA, uint256 amountB, address pair) {
+    pair = factory.pairs(tokenA, tokenB);
+    
+    if (pair == address(0)) {
+        pair = factory.createPair(tokenA, tokenB);
+        (amountA, amountB) = (amountADesired, amountBDesired);
+    } else {
         (uint112 reserveA, uint112 reserveB) = UnifapV2Library.getReserves(
             address(factory),
             tokenA,
             tokenB
         );
+        
         if (reserveA == 0 && reserveB == 0) {
             (amountA, amountB) = (amountADesired, amountBDesired);
         } else {
@@ -146,7 +152,7 @@ contract UnifapV2Router {
             }
         }
     }
-
+}
     function _safeTransferFrom(
         address token,
         address from,

@@ -3,7 +3,7 @@ pragma solidity >=0.8.10;
 
 import {DSTest} from "ds-test/test.sol";
 import {Vm} from "forge-std/Vm.sol";
-import {stdError} from "forge-std/stdlib.sol";
+import {stdError} from "forge-std/Test.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {MockERC20} from "solmate/test/utils/mocks/MockERC20.sol";
 import {UnifapV2Pair} from "../UnifapV2Pair.sol";
